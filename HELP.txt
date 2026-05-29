@@ -1,0 +1,205 @@
+TOUCH.EXE  Windows-native BSD-derived file timestamp tool
+
+Updates file timestamps or creates empty files.
+
+SYNTAX
+  TOUCH [/? | /H | /HELP | -h | -help | --help]
+  TOUCH [options] file [file ...]
+  TOUCH [options] wildcard [wildcard ...]
+  TOUCH -s <FILE> [options] file [file ...]
+  TOUCH -d <DATE> [options] file [file ...]
+  TOUCH -t <TIMESTAMP> [options] file [file ...]
+  TOUCH -e <OFFSET> [options] file [file ...]
+
+DEFAULT
+  Existing file: updates Created, Modified, and Accessed to now.
+  Missing file:  creates empty file, then sets Created, Modified, and Accessed.
+  Reparse point: follows the reparse point to its target.
+
+WINDOWS TIMESTAMPS
+  Created           Windows file creation time
+  Modified          Windows last write time
+  Accessed          Windows last access time
+
+TIMESTAMP SELECTION
+  No selector       Created + Modified + Accessed
+  -a                Accessed only
+  -m                Modified only
+  -c                Created only
+  -am               Accessed + Modified
+  -ac               Accessed + Created
+  -mc               Modified + Created
+  -amc              Accessed + Modified + Created
+
+WINDOWS ENHANCEMENTS
+  Long paths        Supports paths beyond MAX_PATH using native \\?\ handling.
+  Directories       Can update directory timestamps.
+  Wildcards         Expands cmd.exe wildcards such as *.txt and logs\*.json.
+  Parent folders    -p / --parents creates missing parent directories.
+  Creation time     -c / --created exposes Windows Created time.
+  Reparse follow    -f / --follow-reparse follows reparse points to their targets.
+  Reparse ignore    -i / --ignore-reparse skips reparse points entirely.
+  Elevation         -r / --runas relaunches elevated through Windows UAC.
+  Unicode paths     Uses Windows wide-character APIs.
+
+OPTIONS
+
+  BOOLEAN
+  -a  --accessed                     Select Accessed timestamp.
+  -m  --modified                     Select Modified timestamp.
+  -c  --created                      Select Created timestamp.
+  -n  --no-create                    Do not create missing files.
+  -p  --parents                      Create missing parent directories.
+  -i  --ignore-reparse               Skip symlinks, junctions, mount points, and other reparse points.
+  -f  --follow-reparse               Follow reparse points to their targets.
+  -r  --runas                        Relaunch elevated through Windows UAC.
+
+  BOOLEAN SHORT OPTIONS MAY BE GROUPED
+  -am               Accessed + Modified; same as -a -m.
+  -ac               Accessed + Created; same as -a -c.
+  -mc               Modified + Created; same as -m -c.
+  -amc              Accessed + Modified + Created; same as -a -m -c.
+  -np               Same as -n -p.
+  -rn               Same as -r -n.
+  -amcr             Same as -a -m -c -r.
+  -amcnp            Same as -a -m -c -n -p.
+  -amcnpf           Same as -a -m -c -n -p -f.
+  -amcnpi           Same as -a -m -c -n -p -i.
+  -amcnpr           Same as -a -m -c -n -p -r.
+
+  VALUE
+  -s  --sync <FILE>                  Synchronize selected timestamps from referenced file.
+  -d  --date <DATE>                  Set selected timestamps from readable date/time.
+  -t  <TIMESTAMP>                    Set selected timestamps from BSD compact timestamp.
+  -e  --edit <OFFSET>                Adjust selected timestamps by relative offset.
+
+  VALUE OPTIONS REQUIRE SEPARATED VALUE TOKENS
+  -s  reference.txt
+  -d  "2026-05-28 21:30:00"
+  -t  202605282130.00
+  -e  +0130
+  -e  -0100
+
+  VALUE OPTIONS MAY APPEAR BEFORE OR AFTER BOOLEAN OPTIONS
+  -amc -d "2026-05-28 21:30:00" file.txt
+  -d "2026-05-28 21:30:00" -amc file.txt
+  -np -t 202605282130.00 file.txt
+  -t 202605282130.00 -np file.txt
+  -rm -d "2026-05-28 21:30:00" protected.txt
+  -m -d "2026-05-28 21:30:00" -r protected.txt
+
+  OTHER
+  /?  /H  /HELP  -h  -help  --help   Show this help screen.
+  -v  --version                      Show program version.
+
+DATE FORMATS
+  -d  "YYYY-MM-DD HH:MM:SS"
+  -d  "YYYY-MM-DDTHH:MM:SS"
+  -d  "YYYY-MM-DD HH:MM:SS.fffffffff"
+  -d  "YYYY-MM-DDTHH:MM:SS.fffffffff"
+  -d  "YYYY-MM-DDTHH:MM:SSZ"
+
+  -t  [[CC]YY]MMDDhhmm[.SS]
+      Example: -t 202605282130.00
+
+  -e  [+|-][[hh]mm]SS
+      Example: -e +0130     add 1 minute 30 seconds
+      Example: -e -0100     subtract 1 minute
+      Example: -e 0130      add 1 minute 30 seconds
+
+EXAMPLES
+  TOUCH file.txt
+      Create file if missing, or update Created, Modified, and Accessed.
+
+  TOUCH -n file.txt
+      Update Created, Modified, and Accessed only if file exists.
+
+  TOUCH -a file.txt
+      Update Accessed only.
+
+  TOUCH -m file.txt
+      Update Modified only.
+
+  TOUCH -c file.txt
+      Update Created only.
+
+  TOUCH -am file.txt
+      Update Accessed and Modified only.
+
+  TOUCH -amc file.txt
+      Update Accessed, Modified, and Created.
+
+  TOUCH -d "2026-05-28 21:30:00" file.txt
+      Set Created, Modified, and Accessed to readable date/time.
+
+  TOUCH -m -d "2026-05-28 21:30:00" file.txt
+      Set Modified to readable date/time.
+
+  TOUCH -c -d "2026-05-28 21:30:00" file.txt
+      Set Created to readable date/time.
+
+  TOUCH -amc -d "2026-05-28 21:30:00" file.txt
+      Set Accessed, Modified, and Created to readable date/time.
+
+  TOUCH -d "2026-05-28 21:30:00" -amc file.txt
+      Set Accessed, Modified, and Created to readable date/time.
+
+  TOUCH -t 202605282130.00 file.txt
+      Set Created, Modified, and Accessed using BSD compact timestamp.
+
+  TOUCH -am -t 202605282130.00 file.txt
+      Set Accessed and Modified using BSD compact timestamp.
+
+  TOUCH -s reference.txt target.txt
+      Synchronize Created, Modified, and Accessed from referenced file.
+
+  TOUCH -am -s reference.txt target.txt
+      Synchronize Accessed and Modified from referenced file.
+
+  TOUCH -e +0130 file.txt
+      Add 1 minute 30 seconds to Created, Modified, and Accessed.
+
+  TOUCH -e 0130 file.txt
+      Add 1 minute 30 seconds to Created, Modified, and Accessed.
+
+  TOUCH -m -e -0100 file.txt
+      Subtract 1 minute from Modified.
+
+  TOUCH -p logs\build\output.txt
+      Create missing parent directories, then touch file.
+
+  TOUCH -np logs\build\output.txt
+      Do not create the missing file.
+
+  TOUCH -f link.txt
+      Follow a reparse point to its target and touch the target.
+
+  TOUCH -i link.txt
+      Skip the path if it is a reparse point.
+
+  TOUCH -r "C:\Windows\System32\drivers\etc\hosts"
+      Relaunch elevated, then update Created, Modified, and Accessed.
+
+  TOUCH -rm -d "2026-05-28 21:30:00" protected.txt
+      Relaunch elevated, then set Modified to readable date/time.
+
+  TOUCH *.go
+      Update Created, Modified, and Accessed for all .go files in the current directory.
+
+  TOUCH "C:\very long path\...\file.txt"
+      Touch a long Windows path. The program normalizes it internally.
+
+NOTES
+  Default behavior updates all three Windows timestamps: Created, Modified, Accessed.
+  If timestamp selectors are used, only selected timestamps are changed.
+  Boolean short options may be grouped.
+  Value options require separated values for readability and predictable parsing.
+  Value options may appear before or after boolean options.
+  Use only one base time source: -s, -d, or -t.
+  -e edits the selected base time, or existing timestamps if no base time source is used.
+  -e accepts +OFFSET, -OFFSET, or unsigned OFFSET. Unsigned OFFSET means add.
+  Default reparse behavior is to follow reparse points to their targets.
+  -f / --follow-reparse makes default reparse behavior explicit.
+  -i / --ignore-reparse skips reparse points entirely.
+  -i and -f cannot be used together.
+  -r / --runas is Windows-specific and may be grouped with other boolean short options.
