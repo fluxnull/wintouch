@@ -1,118 +1,64 @@
 # WinTouch
 
-Windows-native `touch.exe` inspired by BSD `touch`.
+WinTouch is a Windows-native `touch.exe` for creating files and controlling file timestamps from CMD.
 
-WinTouch creates files and edits Windows file timestamps from the command line. Unlike a POSIX-only clone, it treats the three Windows-visible timestamps as first-class fields:
+It is inspired by BSD `touch`, but it is not a POSIX compatibility shim. WinTouch is built around Windows filesystem behavior and treats the three Windows-visible timestamps as first-class fields:
 
-- Created
-- Modified
-- Accessed
+* Created
+* Modified
+* Accessed
 
-## Command
+Classic `touch` is mainly used to create files and update file times. WinTouch keeps that core behavior, then extends it for Windows-native scripting, testing, metadata repair, and batch timestamp control.
 
-```cmd
-touch [options] file [file ...]
-```
+## What it does
 
-## Features
+* Creates empty files when they do not exist.
+* Updates timestamps on existing files.
+* Defaults to updating Created, Modified, and Accessed.
+* Selects individual timestamps with `-a`, `-m`, and `-c`.
+* Sets exact readable dates with `-d <DATE>`.
+* Sets BSD compact timestamps with `-t <TIMESTAMP>`.
+* Synchronizes timestamps from another file with `-s / --sync <FILE>`.
+* Applies relative timestamp offsets with `-e / --edit <OFFSET>`.
 
-- Updates Created, Modified, and Accessed timestamps.
-- Default behavior updates all three Windows timestamps.
-- Select individual timestamps with `-a`, `-m`, and `-c`.
-- Supports grouped boolean flags such as `-amc`, `-np`, and `-rm`.
-- Sets readable dates with `-d <DATE>`.
-- Sets BSD compact timestamps with `-t <TIMESTAMP>`.
-- Synchronizes timestamps from another file with `-s / --sync <FILE>`.
-- Applies relative timestamp offsets with `-e / --edit <OFFSET>`.
-- Supports no-create mode with `-n / --no-create`.
-- Creates missing parent directories with `-p / --parents`.
-- Supports wildcard targets.
-- Supports files and directories.
-- Supports Unicode paths.
-- Supports long Windows paths.
-- Supports reparse controls with `-f / --follow-reparse` and `-i / --ignore-reparse`.
-- Supports UAC relaunch with `-r / --runas`.
+## Windows-native enhancements
 
-## Examples
+* **Created timestamp support**
+  Windows exposes file creation time as a normal visible timestamp. WinTouch makes Created as scriptable as Modified and Accessed.
 
-Create a file if missing, or update Created, Modified, and Accessed:
+* **All-three timestamp default**
+  By default, WinTouch updates Created, Modified, and Accessed together instead of only Modified and Accessed.
 
-```cmd
-touch file.txt
-```
+* **Grouped boolean flags**
+  Short options can be grouped for fast CMD usage, such as `-amc`, `-np`, and `-rm`.
 
-Set Modified only:
+* **Long path support**
+  Handles Windows long paths beyond legacy `MAX_PATH` limits using native Windows path handling.
 
-```cmd
-touch -m -d "2026-05-28 21:30:00" file.txt
-```
+* **Unicode path support**
+  Works with Unicode filenames and paths through Windows wide-character APIs.
 
-Set Created, Modified, and Accessed:
+* **Directory timestamp support**
+  Updates timestamps on directories as well as files.
 
-```cmd
-touch -amc -d "2026-05-28 21:30:00" file.txt
-```
+* **Wildcard targets**
+  Expands CMD-style wildcard targets such as `*.txt`, `*.go`, and `logs\*.json`.
 
-Synchronize timestamps from another file:
+* **Parent directory creation**
+  `-p / --parents` creates missing parent folders before touching the target file.
 
-```cmd
-touch -s reference.txt target.txt
-```
+* **No-create mode**
+  `-n / --no-create` updates only existing files and skips missing paths.
 
-Add one minute and thirty seconds to all selected timestamps:
+* **Reparse-point control**
+  `-f / --follow-reparse` follows reparse points to their targets, while `-i / --ignore-reparse` skips reparse points entirely.
 
-```cmd
-touch -e +0130 file.txt
-```
+* **UAC relaunch**
+  `-r / --runas` relaunches through Windows UAC for protected paths.
 
-Create parent directories and the file:
+* **CMD-first behavior**
+  Designed for direct use from CMD and batch files, with Windows-style help aliases such as `/?`, `/H`, and `/HELP`.
 
-```cmd
-touch -p logs\build\output.txt
-```
-
-Run elevated through UAC:
-
-```cmd
-touch -r -m -d "2027-06-29 22:31:01" protected.txt
-```
-
-## Help
-
-Full command help is in [`HELP.txt`](HELP.txt).
-
-```cmd
-touch /?
-```
-
-## Build
-
-```cmd
-build.cmd
-```
-
-The Windows AMD64 executable is written to:
-
-```text
-bin\touch.exe
-```
-
-## Test
-
-Run the CMD-only behavior script:
-
-```cmd
-test\test-wintouch-cmd.cmd bin\touch.exe
-```
-
-The test runner creates:
-
-```text
-test-output\wintouch_cmd_report_<timestamp>.txt
-test-output\wintouch_cmd_cases_<timestamp>\
-```
-
-See [`TESTING.md`](TESTING.md).
 
 ## Project scope
 
