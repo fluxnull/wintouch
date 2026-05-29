@@ -23,42 +23,41 @@ Classic `touch` is mainly used to create files and update file times. WinTouch k
 
 ## Windows-native enhancements
 
-* **Created timestamp support**
+- **Created timestamp support**  
   Windows exposes file creation time as a normal visible timestamp. WinTouch makes Created as scriptable as Modified and Accessed.
 
-* **All-three timestamp default**
+- **All-three timestamp default**  
   By default, WinTouch updates Created, Modified, and Accessed together instead of only Modified and Accessed.
 
-* **Grouped boolean flags**
+- **Grouped boolean flags**  
   Short options can be grouped for fast CMD usage, such as `-amc`, `-np`, and `-rm`.
 
-* **Long path support**
+- **Long path support**  
   Handles Windows long paths beyond legacy `MAX_PATH` limits using native Windows path handling.
 
-* **Unicode path support**
+- **Unicode path support**  
   Works with Unicode filenames and paths through Windows wide-character APIs.
 
-* **Directory timestamp support**
+- **Directory timestamp support**  
   Updates timestamps on directories as well as files.
 
-* **Wildcard targets**
+- **Wildcard targets**  
   Expands CMD-style wildcard targets such as `*.txt`, `*.go`, and `logs\*.json`.
 
-* **Parent directory creation**
+- **Parent directory creation**  
   `-p / --parents` creates missing parent folders before touching the target file.
 
-* **No-create mode**
+- **No-create mode**  
   `-n / --no-create` updates only existing files and skips missing paths.
 
-* **Reparse-point control**
+- **Reparse-point control**  
   `-f / --follow-reparse` follows reparse points to their targets, while `-i / --ignore-reparse` skips reparse points entirely.
 
-* **UAC relaunch**
+- **UAC relaunch**  
   `-r / --runas` relaunches through Windows UAC for protected paths.
 
-* **CMD-first behavior**
+- **CMD-first behavior**  
   Designed for direct use from CMD and batch files, with Windows-style help aliases such as `/?`, `/H`, and `/HELP`.
-
 
 ## Project scope
 
